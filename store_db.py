@@ -29,13 +29,13 @@ cur.execute('CREATE TABLE client (id INTEGER PRIMARY KEY, name TEXT, phone INTEG
 cur.execute('CREATE TABLE item (id INTEGER PRIMARY KEY, order_id INTEGER, product_id INTEGER, quantity INTEGER, sales_amount INTEGER)')
 
 # Create the order table
-cur.execute('CREATE TABLE order (id INTEGER PRIMARY KEY, client_id INTEGER, branch_id INTEGER, date TEXT, total INTEGER)')
+cur.execute('CREATE TABLE "order" (id INTEGER PRIMARY KEY, client_id INTEGER, branch_id INTEGER, "date" TEXT, total INTEGER)')
 
 
 # Create foreign keys
-cur.execute('ALTER TABLE order ADD FOREIGN KEY (client_id) REFERENCES client (id)')
-cur.execute('ALTER TABLE order ADD FOREIGN KEY (branch_id) REFERENCES branch (id)')
-cur.execute('ALTER TABLE item ADD FOREIGN KEY (order_id) REFERENCES order (id)')
+cur.execute('ALTER TABLE "order" ADD FOREIGN KEY (client_id) REFERENCES client (id)')
+cur.execute('ALTER TABLE "order" ADD FOREIGN KEY (branch_id) REFERENCES branch (id)')
+cur.execute('ALTER TABLE item ADD FOREIGN KEY (order_id) REFERENCES "order" (id)')
 cur.execute('ALTER TABLE item ADD FOREIGN KEY (product_id) REFERENCES product (id)')
 cur.execute('ALTER TABLE product ADD FOREIGN KEY (id_category) REFERENCES category (id)')
 cur.execute('ALTER TABLE branch ADD FOREIGN KEY (id) REFERENCES stock (branch_id)')
