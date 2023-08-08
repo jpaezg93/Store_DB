@@ -1,62 +1,36 @@
-CREATE TABLE "category" (
-  "id" int PRIMARY KEY,
-  "name" varchar
-);
-
-CREATE TABLE "product" (
-  "id" int PRIMARY KEY,
-  "name" varchar,
-  "brand" varchar,
-  "id_category" int,
-  "unit_price" int
-);
-
-CREATE TABLE "branch" (
-  "id" int PRIMARY KEY,
-  "name" varchar,
-  "address" varchar
-);
-
-CREATE TABLE "stock" (
-  "id" int PRIMARY KEY,
-  "branch_id" int NOT NULL,
-  "product_id" int NOT NULL,
-  "quantity" int
-  UNIQUE("branch_id", "product_id")
-);
-
-CREATE TABLE "client" (
-  "id" int PRIMARY KEY,
-  "name" varchar,
-  "phone" int
-);
-
+CREATE TABLE category (
+	id INTEGER PRIMARY KEY,
+	name TEXT);
+CREATE TABLE branch (
+	id INTEGER PRIMARY KEY,
+	name TEXT,
+	address TEXT);
+CREATE TABLE product (
+	id INTEGER PRIMARY KEY,
+	name TEXT,
+	brand TEXT,
+	unit_price INTEGER,
+	category_id INTEGER REFERENCES category (id),
+	branch_id INTEGER REFERENCES branch (id));
+CREATE TABLE stock (
+	id INTEGER PRIMARY KEY,
+	branch_id INTEGER NOT NULL REFERENCES branch (id),
+	product_id INTEGER NOT NULL REFERENCES product (id),
+	quantity INTEGER,
+	UNIQUE(branch_id, product_id));
+CREATE TABLE client (
+	id INTEGER PRIMARY KEY,
+	name TEXT,
+	phone INTEGER);
+CREATE TABLE item (
+	id INTEGER PRIMARY KEY,
+	quantity INTEGER,
+	sales_amount INTEGER,
+	order_id INTEGER REFERENCES "order" (id),
+	product_id INTEGER REFERENCES product (id));
 CREATE TABLE "order" (
-  "id" int PRIMARY KEY,
-  "client_id" int,
-  "branch_id" int,
-  "date" date,
-  "total" int
-);
-
-CREATE TABLE "item" (
-  "id" int PRIMARY KEY,
-  "order_id" int,
-  "product_id" int,
-  "quantity" int,
-  "sales_amount" int
-);
-
-ALTER TABLE "order" ADD FOREIGN KEY ("client_id") REFERENCES "client" ("id");
-
-ALTER TABLE "order" ADD FOREIGN KEY ("branch_id") REFERENCES "branch" ("id");
-
-ALTER TABLE "item" ADD FOREIGN KEY ("order_id") REFERENCES "order" ("id");
-
-ALTER TABLE "item" ADD FOREIGN KEY ("product_id") REFERENCES "product" ("id");
-
-ALTER TABLE "product" ADD FOREIGN KEY ("id_category") REFERENCES "category" ("id");
-
-ALTER TABLE "branch" ADD FOREIGN KEY ("id") REFERENCES "stock" ("branch_id");
-
-ALTER TABLE "product" ADD FOREIGN KEY ("id") REFERENCES "stock" ("product_id");
+	id INTEGER PRIMARY KEY,
+	"date" DATE,
+	total INTEGER,
+	client_id INTEGER REFERENCES client (id),
+	branch_id INTEGER REFERENCES branch (id));
