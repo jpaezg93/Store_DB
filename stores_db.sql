@@ -16,7 +16,7 @@ CREATE TABLE "product" (
   "id" SERIAL,
   "name" varchar(60),
   "brand" varchar(60),
-  "id_category" integer,
+  "category_id" integer,
   "unit_price" integer,
   primary key (id)
 );
@@ -70,7 +70,7 @@ ALTER TABLE "item" ADD FOREIGN KEY ("order_id") REFERENCES "order" ("id");
 
 ALTER TABLE "item" ADD FOREIGN KEY ("product_id") REFERENCES "product" ("id");
 
-ALTER TABLE "product" ADD FOREIGN KEY ("id_category") REFERENCES "category" ("id");
+ALTER TABLE "product" ADD FOREIGN KEY ("category_id") REFERENCES "category" ("id");
 
 ALTER TABLE "stock" ADD FOREIGN KEY ("branch_id") REFERENCES "branch" ("id");
 
@@ -83,11 +83,11 @@ insert into category ("name") values
 ('Sports'),
 ('Toys');
 
-insert into product ("name", brand, id_category, unit_price) values
+insert into product ("name", brand, category_id, unit_price) values
 ('Television', 'Sony', 1, 1000),
 ('Laptop', 'HP', 1, 800),
 ('Shirt', 'Zara', 2, 50),
-('Pants', 'Levis', 2, 70),
+('Pants', 'Levi''s', 2, 70),
 ('Frying pan', 'T-fal', 3, 30),
 ('Towel', 'Cannon', 3, 20),
 ('Ball', 'Nike', 4, 15),
@@ -207,3 +207,28 @@ select avg(unit_price) as avarage_price_of_products from product;
 select branch_id as branch, sum(quantity) as stock_of_products from stock group by branch_id;
 --total amount of sales per client
 select c.name as client_name, count(*) as number_of_orders from "order" o join client c on o.client_id=c.id group by c.id;
+
+--number of clients who purchased a doll extra
+SELECT COUNT(DISTINCT o.client_id) AS number_of_people_who_purchased_a_doll
+FROM "order" o join item i on o.id=i.order_id 
+WHERE i.product_id = 9;
+
+--avarage price of products by category
+select c."name" as category, avg(p.unit_price) as avarage_price_per_category
+from product p join category c on p.category_id =c.id
+group by c.id;
+
+--total stock by category
+select c."name" as category, sum(s.quantity) as stock_per_category
+from stock s join product p on s.product_id = p.id join category c on c.id = p.category_id
+group by c.id order by c.id;
+
+--total sales per branch ** revisar
+select b."name" , sum (i.sales_amount) as total_sales_per_branch
+from item i join "order" o on i.order_id = o.id join branch b on o.branch_id = b.id
+group by b.id order by b.id;
+
+-- client with the biggest amount of purchases
+select c."name" as most_loyal_customer , sum(i.sales_amount) as purchased_amount
+from item i join "order" o on i.order_id = o.id join client c on o.client_id = c.id
+group by c.id order by purchased_amount desc limit 1;
